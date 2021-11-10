@@ -1,12 +1,16 @@
-#Decodes a text file
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 '''
-# Please, first run shorten_text.py, then this script
+# Decodes a text file
+# Please, first run shorten_text.py, then this script.
 '''
-
-DICT_FILEPATH = 'example/corpus_dict-reduced.txt'
-PATH = 'example/arpa.lm'
-OUTPUT_FILEPATH = 'example/arpa-final.lm'
+import sys
+if len(sys.argv) != 4:
+    print(sys.argv[0] + "  Please, specify 3 args: IN-corpus, OUT-reduced and OUT-dict.")
+    # python3 lengthen_text.py $myProject/arpa.lm $myProject/arpa-final.lm $myProject/corpus_dict-reduced.txt
+    sys.exit(2)
+[PATH, OUTPUT_FILEPATH, DICT_FILEPATH] = sys.argv[1:4]
 TEXT_SEPARATOR = ' '
 
 

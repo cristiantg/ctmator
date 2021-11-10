@@ -1,12 +1,16 @@
-# python3 merge_lex.py lex1 lex2 combined.lex
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+'''
 # Merges two Kaldi lexicons into one (no repeated entries)
 # If repeated entries: the second lexicon has priority.
+'''
 
 import sys
 if len(sys.argv) != 4:
-    print(sys.argv[0] + "  Please, specify both lexicon files and output file (3 args)  ")
+    print(sys.argv[0] + "Please, specify 3 args both lexicon files and the output file.")
+    # python3 merge_lex.py lex1 lex2 combined.lex
     sys.exit(2)
- 
 [LEX_1, LEX_2, OUT_LEX] = sys.argv[1:4]
 
 SEP = '\t'
@@ -41,4 +45,5 @@ with open(OUT_LEX, 'w', encoding='utf-8') as f:
     print('\t--> New file:', OUT_LEX)
     for i in sorted (words_combined):
         f.write(i + SEP + words_combined[i] + '\n')
-    print('\tOUT_LEX:', len(words_combined), 'words')
+    repeated = int((len(words_1)+len(words_2)-len(words_combined)))
+    print('\tOUT_LEX:', len(words_combined), 'words', '-->', repeated, 'repeated words,', len(words_2)-repeated, 'new words')

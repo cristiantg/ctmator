@@ -1,20 +1,28 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+'''
 # Prepares three KALDI files: spk2utt, segments and wavscp from a audio folder
+'''
 
-# OUTPUT_FOLDER - Ending with slash
-OUTPUT_FOLDER = '/vol/tensusers3/ctejedor/lacristianmachine/opt/kaldi_nl/homed_kaldi/'
-# AUDIO_FOLDER - Not ending with slash
-AUDIO_FOLDER = '/vol/tensusers3/ctejedor/lacristianmachine/opt/kaldi_nl/homed_test_input'
+import os, glob, sys
+from pathlib import Path
+if len(sys.argv) != 3:
+    print(sys.argv[0] + "  Please, specify 2 args: (1) OUTPUT_FOLDER and (2) AUDIO_FOLDER")
+    # python3 speech2kaldi.py $myProject/homed_kaldi $KALDIdir/homed_testset
+    sys.exit(2)
+[OUTPUT_FOLDER, AUDIO_FOLDER] = sys.argv[1:3]
+Path(OUTPUT_FOLDER).mkdir(parents=True, exist_ok=True)
 
-import os
-import glob
 
+##########################################
 print('   - OUTPUT_FOLDER:',OUTPUT_FOLDER)
 # spk2utt
 file_names = {}
 file_names_no_ext = []
 names_segments = {}
 names_paths = {}
-with open(OUTPUT_FOLDER+'spk2utt', 'w') as f: 
+with open(os.path.join(OUTPUT_FOLDER,'spk2utt'), 'w') as f: 
     print('\t--> spk2utt')
     files = os.listdir(AUDIO_FOLDER)
     for filename in glob.glob(os.path.join(AUDIO_FOLDER, '*.wav')):
@@ -38,14 +46,14 @@ def get_duration(file_path):
         duration = frames / float(rate)
     return duration
 
-with open(OUTPUT_FOLDER+'segments', 'w') as f: 
+with open(os.path.join(OUTPUT_FOLDER,'segments'), 'w') as f: 
     print('\t--> segments')
     for i in sorted (names_segments):        
         duration = str(round(get_duration(file_names[names_segments[i][1]][0]),3))
         f.write(names_segments[i][0]+' '+i + ' 0.000 '+ duration + ' \n')
 
 # wavscp.scp
-with open(OUTPUT_FOLDER+'wavscp.scp', 'w') as f: 
+with open(os.path.join(OUTPUT_FOLDER,'wavscp.scp'), 'w') as f: 
     print('\t--> wavscp.scp')
     file_names=dict(sorted(file_names.items()))
     for i in sorted (file_names):

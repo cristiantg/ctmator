@@ -1,10 +1,23 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+'''
 # Tranforms ctm files into sclite format
 # How to execute this script when printing all commented #####symbols lines:
 # PYTHONIOENCODING=utf-8 python3 ctm2sclite.py
+'''
 
-PATH_REF_FOLDER = 'ref' 
-PATH_HYP_FILE = 'hyp'
-PATH_SCLITE_OUTPUT = 'sclite_output'
+import os, re, sys
+
+if len(sys.argv) != 5:
+    print(sys.argv[0] + "  Please, specify 4 args: (1) PATH_REF_FOLDER, (2) PATH_HYP_FILE, (3) PATH_SENTENCES_INPUT, (4) PATH_SCLITE_OUTPUT")
+    # python3 ctm2sclite.py $KALDIdir/ctmator/ctm_test  $KALDIdir/ctmator/hyp  $KALDIdir/ctmator/ctm_train $KALDIdir/ctmator/sclite_output
+    sys.exit(2)
+[PATH_REF_FOLDER, PATH_HYP_FILE, PATH_SENTENCES_INPUT, PATH_SCLITE_OUTPUT] = sys.argv[1:5]
+
+# Be careful, if you want map down digits you need the map_digits_to_words_v2.perl file
+# Not included in this repo. due to copyright issues.
+DIGITS_TO_WORDS_FILE_PATH = '/home/ctejedor/python-scripts/lexiconator/local/map_digits_to_words_v2.perl'
 REF_FILE_NAME_SCLITE_OUTPUT = 'ref.txt'
 CORPUS_FILE_NAME_SCLITE_OUTPUT = 'sentences.txt'
 HYP_FILE_NAME_SCLITE_OUTPUT = 'hyp.txt'
@@ -12,14 +25,7 @@ EXTENSION_TO_EXTRACT = '.ctm'
 REPLACE_SYMBOLS = {'.':'', '?':'', 'SIL':'', ',':'', '=':'-', "’":"'"} #+lowercase, xxx
 REPLACE_SCLITE_SYMBOLS = {'(':'_', ')':'_', '-':'_', ' ':'_', '\t':'_'}
 REPLACE_WORDS = {"'t":'het'}
-# Be careful, if you want map down digits you need the map_digits_to_words_v2.perl file
-# Not included in this repo. due to copyright issues.
-DIGITS_TO_WORDS_FILE_PATH = '/home/ctejedor/python-scripts/lexiconator/local/map_digits_to_words_v2.perl'
 TEMPORAL_FILE = "tmp"
-
-import os
-import re
-
 
 def map_digits(digits):
     m_text = digits    
@@ -141,7 +147,7 @@ def ctm2Sentences():
 print_map2sclite(get_words(PATH_REF_FOLDER), PATH_SCLITE_OUTPUT, REF_FILE_NAME_SCLITE_OUTPUT, True)
 
 # 2. N ctm sentences (without IDs) files -> file
-print_map2sclite(get_words(PATH_REF_FOLDER), PATH_SCLITE_OUTPUT, CORPUS_FILE_NAME_SCLITE_OUTPUT, False)
+print_map2sclite(get_words(PATH_SENTENCES_INPUT), PATH_SCLITE_OUTPUT, CORPUS_FILE_NAME_SCLITE_OUTPUT, False)
 # 
 
 # 3. N ctm hyp. files -> 1 sclite file

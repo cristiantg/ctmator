@@ -1,21 +1,19 @@
 #!/bin/sh
 
-#
-# Decodes a bunch of files and obtain the n-best output
+'''
+# Decodes a bunch of audio files and obtain the n-best output
 ################
-# Please change all three # CHANGE-1, # CHANGE-2 and # CHANGE-3
-# with the same value.
-#
+# Please change all lines: # CHANGE-1, # CHANGE-2, # CHANGE-3 and
+# CHANGE-4 with the correct path value
 # PD: BTW, I tried to set a variable but when combining Kaldi + 
-# pipes + variabels it does not work
+# pipes + variabels it does not work.
 ################
-#
-#
+'''
 
 
 KALDIdir=/vol/tensusers3/ctejedor/lacristianmachine/opt/kaldi_nl
 # CHANGE-1
-HCLGdir=/vol/tensusers3/ctejedor/homed_21_cgn_simple_light/out_cgn
+HCLGdir=/vol/tensusers3/ctejedor/homed_mj_90/out_cgn
 #######HCLGdir=$KALDIdir/out_cgn
 HCLG=$HCLGdir/HCLG.fst
 wordlist=$HCLGdir/words.txt
@@ -26,10 +24,10 @@ utilsdir=utils
 # Change the same value of indir and outdir in the next command
 # Change the same value of indir and outdir in the next command
 #indir=/vol/tensusers3/ctejedor/lacristianmachine/opt/kaldi_nl/homed_21_cgn/decoded
-indir=/vol/tensusers3/ctejedor/homed_21_cgn_simple_light/decoded
+indir=/vol/tensusers3/ctejedor/homed_mj_90/decoded
 outdir=$indir
 rm -r $outdir
-mkdir $outdir
+mkdir -p $outdir
 
 
 /vol/customopt/lamachine2/opt/kaldi/src/online2bin/online2-wav-nnet3-latgen-faster \
@@ -47,8 +45,8 @@ mkdir $outdir
 --word-symbol-table=$wordlist \
 ${model}/final.mdl \
 $HCLG \
-ark:/vol/tensusers3/ctejedor/lacristianmachine/opt/kaldi_nl/homed_kaldi/spk2utt 'ark,s,cs:/vol/customopt/lamachine2/opt/kaldi/src/featbin/extract-segments scp,p:/vol/tensusers3/ctejedor/lacristianmachine/opt/kaldi_nl/homed_kaldi/wavscp.scp /vol/tensusers3/ctejedor/lacristianmachine/opt/kaldi_nl/homed_kaldi/segments ark:- |' 'ark:|/vol/customopt/lamachine2/opt/kaldi/src/latbin/lattice-scale \
---acoustic-scale=10.0 ark:- ark:- | gzip -c > /vol/tensusers3/ctejedor/homed_21_cgn_simple_light/decoded/mylat.test1.gz'
-# CHANGE-3 (PREV. LINE)
+ark:/vol/tensusers3/ctejedor/homed_mj_90/homed_kaldi/spk2utt 'ark,s,cs:/vol/customopt/lamachine2/opt/kaldi/src/featbin/extract-segments scp,p:/vol/tensusers3/ctejedor/homed_mj_90/homed_kaldi/wavscp.scp /vol/tensusers3/ctejedor/homed_mj_90/homed_kaldi/segments ark:- |' 'ark:|/vol/customopt/lamachine2/opt/kaldi/src/latbin/lattice-scale \
+--acoustic-scale=10.0 ark:- ark:- | gzip -c > /vol/tensusers3/ctejedor/homed_mj_90/decoded/mylat.test1.gz'
+# CHANGE-3 and CHANGE-4 (PREV. 2 LINES)
 gunzip -c $outdir/mylat.test1.gz | $latbindir/lattice-to-ctm-conf --frame-shift=0.03 --inv-acoustic-scale=10  ark:- $outdir/out.ctm
 cat $outdir/out.ctm | $utilsdir/int2sym.pl -f 5 $wordlist > $outdir/out.ctm_w

@@ -1,15 +1,19 @@
-'''
-Calculates (%) number of words of the reference transcription included in the ASR lexicon.
-'''
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
-####LEXICON_FILE = '/vol/tensusers3/ctejedor/lacristianmachine/opt/kaldi_nl/testLG_5/corpus.txt'
-####LEXICON_FILE = '/vol/tensusers3/ctejedor/homed_21_simple/corpus.txt'
-####LEXICON_FILE = '/vol/tensusers3/ctejedor/homed_21_cgn_simple/corpus.txt'
-LEXICON_FILE = '/vol/tensusers3/ctejedor/homed_21_cgn_simple_light/corpus.txt'
+'''
+# Calculates (%) the number of words of the reference transcription included in the ASR lexicon.
+'''
+import sys
+if len(sys.argv) != 3:
+    print(sys.argv[0] + "  Please, specify 2 args: CORPUS_FILE and SOURCE_TEXT ref.")
+    #python3 lexical_coverage.py $myProject/corpus.txt sclite_output/ref.txt
+    sys.exit(2)
+[CORPUS_FILE, SOURCE_TEXT] = sys.argv[1:3]
+
 LEXICON_SEP = ''
 # Set LEXICON_LOWER = True if you want to convert all lexicon words to lowercase
-LEXICON_LOWER = True
-SOURCE_TEXT = 'sclite_output/ref.txt'
+LEXICON_LOWER = False
 SOURCE_SEP = ' '
 # Set SOURCE_LOWER = True if you want to convert all source words to lowercase
 SOURCE_LOWER = False
@@ -61,7 +65,7 @@ def intersection(set1, set2):
     return set1.intersection(set2)
 
 def print_lexica_coverage(source, source_list, source_map, lexica):
-    print('LEXICON_FILE',LEXICON_FILE)
+    print('CORPUS_FILE',CORPUS_FILE)
     print('SOURCE_TEXT',SOURCE_TEXT)    
 
 
@@ -93,7 +97,7 @@ def print_lexica_coverage(source, source_list, source_map, lexica):
 ###############################################
 print('\nStats:')
 # 1. Read original lexicon file
-original_lexicon = read_lexicon(LEXICON_FILE)
+original_lexicon = read_lexicon(CORPUS_FILE)
 print("-> original_lexicon", len(original_lexicon))
 
 # 2. Read source text to add new words

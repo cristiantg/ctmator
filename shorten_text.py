@@ -1,8 +1,18 @@
-#Encodes a text file
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
-PATH = 'example/corpus.txt'
-OUTPUT_FILEPATH = 'example/corpus-reduced.txt'
-OUTPUT_DICT_FILEPATH = 'example/corpus_dict-reduced.txt'
+'''
+# Encodes a text file (repeated words are encoded with the same key)
+'''
+
+import sys
+if len(sys.argv) != 4:
+    print(sys.argv[0] + "  Please, specify (3 args): corpus, reduced and dict  ")
+    # python3 shorten_text $myProject/sentences.txt $myProject/corpus-reduced.txt $myProject/corpus_dict-reduced.txt
+    sys.exit(2)
+[PATH, OUTPUT_FILEPATH, OUTPUT_DICT_FILEPATH] = sys.argv[1:4]
+
+
 TEXT_SEPARATOR = ' '
 MAX_CHAR = 0
 WORD_PREFFIX = "###---"
@@ -18,6 +28,7 @@ with open(PATH, 'r', encoding='utf-8') as f:
 
 # 2. Convert source
 new_dict = {}
+original_words = {}
 final_text = []
 global_counter = 0
 for m_list in original_text:
@@ -25,9 +36,14 @@ for m_list in original_text:
     for m_text in m_list:
         processed_word = m_text
         if len(m_text) > MAX_CHAR:
-            processed_word = WORD_PREFFIX + str(global_counter)
-            new_dict[processed_word] = m_text
-            global_counter = global_counter + 1
+            processed_word = ''
+            if m_text in original_words:
+                processed_word = original_words[m_text]
+            else:
+                processed_word = WORD_PREFFIX + str(global_counter)
+                new_dict[processed_word] = m_text
+                original_words[m_text] = processed_word
+                global_counter = global_counter + 1
         _list.append(processed_word)
     final_text.append(_list)
 

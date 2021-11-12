@@ -1,6 +1,6 @@
 #!/bin/sh
 
-'''
+
 # Decodes a bunch of audio files and obtain the n-best output
 ################
 # Please change all lines: # CHANGE-1, # CHANGE-2, # CHANGE-3 and
@@ -8,12 +8,11 @@
 # PD: BTW, I tried to set a variable but when combining Kaldi + 
 # pipes + variabels it does not work.
 ################
-'''
 
 
 KALDIdir=/vol/tensusers3/ctejedor/lacristianmachine/opt/kaldi_nl
 # CHANGE-1
-HCLGdir=/vol/tensusers3/ctejedor/homed_mj_90/out_cgn
+HCLGdir=/vol/tensusers3/ctejedor/homed_mj_90b/out_cgn
 #######HCLGdir=$KALDIdir/out_cgn
 HCLG=$HCLGdir/HCLG.fst
 wordlist=$HCLGdir/words.txt
@@ -24,7 +23,7 @@ utilsdir=utils
 # Change the same value of indir and outdir in the next command
 # Change the same value of indir and outdir in the next command
 #indir=/vol/tensusers3/ctejedor/lacristianmachine/opt/kaldi_nl/homed_21_cgn/decoded
-indir=/vol/tensusers3/ctejedor/homed_mj_90/decoded
+indir=/vol/tensusers3/ctejedor/homed_mj_90b/decoded
 outdir=$indir
 rm -r $outdir
 mkdir -p $outdir
@@ -39,14 +38,14 @@ mkdir -p $outdir
 --config=${model}/conf/online.conf \
 --min-active=200 \
 --max-active=7000 \
---beam=15 \
+--beam=30 \
 --lattice-beam=6.0 \
 --acoustic-scale=1.2 \
 --word-symbol-table=$wordlist \
 ${model}/final.mdl \
 $HCLG \
-ark:/vol/tensusers3/ctejedor/homed_mj_90/homed_kaldi/spk2utt 'ark,s,cs:/vol/customopt/lamachine2/opt/kaldi/src/featbin/extract-segments scp,p:/vol/tensusers3/ctejedor/homed_mj_90/homed_kaldi/wavscp.scp /vol/tensusers3/ctejedor/homed_mj_90/homed_kaldi/segments ark:- |' 'ark:|/vol/customopt/lamachine2/opt/kaldi/src/latbin/lattice-scale \
---acoustic-scale=10.0 ark:- ark:- | gzip -c > /vol/tensusers3/ctejedor/homed_mj_90/decoded/mylat.test1.gz'
+ark:/vol/tensusers3/ctejedor/homed_mj_90b/homed_kaldi/spk2utt 'ark,s,cs:/vol/customopt/lamachine2/opt/kaldi/src/featbin/extract-segments scp,p:/vol/tensusers3/ctejedor/homed_mj_90b/homed_kaldi/wavscp.scp /vol/tensusers3/ctejedor/homed_mj_90b/homed_kaldi/segments ark:- |' 'ark:|/vol/customopt/lamachine2/opt/kaldi/src/latbin/lattice-scale \
+--acoustic-scale=10.0 ark:- ark:- | gzip -c > /vol/tensusers3/ctejedor/homed_mj_90b/decoded/mylat.test1.gz'
 # CHANGE-3 and CHANGE-4 (PREV. 2 LINES)
 gunzip -c $outdir/mylat.test1.gz | $latbindir/lattice-to-ctm-conf --frame-shift=0.03 --inv-acoustic-scale=10  ark:- $outdir/out.ctm
 cat $outdir/out.ctm | $utilsdir/int2sym.pl -f 5 $wordlist > $outdir/out.ctm_w

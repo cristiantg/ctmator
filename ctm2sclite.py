@@ -23,8 +23,9 @@ CORPUS_FILE_NAME_SCLITE_OUTPUT = 'sentences.txt'
 HYP_FILE_NAME_SCLITE_OUTPUT = 'hyp.txt'
 EXTENSION_TO_EXTRACT = '.ctm'
 REPLACE_SYMBOLS = {'.':'', '?':'', 'SIL':'', ',':'', '=':'-', "’":"'"} #+lowercase, xxx
+DELETE_ONLY_BEGIN_END = ["-", "\'"]
 REPLACE_SCLITE_SYMBOLS = {'(':'_', ')':'_', '-':'_', ' ':'_', '\t':'_'}
-REPLACE_WORDS = {"'t":'het'}
+REPLACE_WORDS = {}
 TEMPORAL_FILE = "tmp"
 
 def map_digits(digits):
@@ -42,10 +43,11 @@ Also deletes any - at the beg/end of the word
 def clean_word(m_word):
     for symbol in REPLACE_SYMBOLS:
         m_word = m_word.replace(symbol, REPLACE_SYMBOLS[symbol])
-    if m_word.startswith('-'):
-        m_word= m_word[1:]
-    if m_word.endswith('-'):
-        m_word = m_word[:m_word.rindex('-')]
+    for m_symbol in DELETE_ONLY_BEGIN_END:
+        if m_word.startswith(m_symbol):
+            m_word= m_word[1:] 
+        if m_word.endswith(m_symbol):
+            m_word = m_word[:m_word.rindex(m_symbol)]
     if m_word in REPLACE_WORDS:
         m_word = REPLACE_WORDS[m_word]
     return m_word.lower()

@@ -7,7 +7,7 @@
 # PYTHONIOENCODING=utf-8 python3 ctm2sclite.py
 '''
 
-import os, re, sys
+import os, re, sys, random
 
 if len(sys.argv) != 5:
     print(sys.argv[0] + "  Please, specify 4 args: (1) PATH_REF_FOLDER, (2) PATH_HYP_FILE, (3) PATH_SENTENCES_INPUT, (4) PATH_SCLITE_OUTPUT")
@@ -49,7 +49,7 @@ def clean_word(m_word):
         if m_word.endswith(m_symbol):
             m_word = m_word[:m_word.rindex(m_symbol)]
     if m_word in REPLACE_WORDS:
-        m_word = REPLACE_WORDS[m_word]
+        m_word = random.choice(REPLACE_WORDS[m_word])
     return m_word.lower()
 
 

@@ -3,14 +3,14 @@
 
 '''
 # Calculates the interagreeemnt beteween n transcribers.
-# There must be x subfolders inside the root folder (1folder=1speaker).
-# In each subfolder there must be txt files (same name for all speakers).
+# There must be x subfolders inside the root_folder (1subfolder=1speaker).
+# In each subfolder there must be txt files (same file name for all speakers).
 '''
 
 from sys import argv, exit
 if len(argv) != 3:
     print(argv[0] + "  Please, specify 2 args: root folder path and output file paths")
-    # python3 interagreement.py my_root_folder my_out_file.txt
+    # python3 interagreement.py root_folder my_out_file.txt
     exit(2)
 [PATH, OUTPUT_FILEPATH] = argv[1:3]
 
@@ -22,8 +22,8 @@ from glob import glob
 from statistics import mean
 
 KEY_SEPARATOR = ' <--> '
-REPLACE_SYMBOLS = {'.':'', '?':'', 'SIL':'', ',':'', '=':'-', "’":"'"} #+lowercase, xxx
-REPLACE_WORDS = {}
+REPLACE_SYMBOLS = {'.':'', '?':'', 'SIL':'', ',':'', '=':'-', "’":"'"} #+lowercase
+REPLACE_WORDS = {'xxx':'<unk>'}
 '''
 Lowercase word with symbols replaced.
 Also deletes any - at the beg/end of the word
@@ -37,6 +37,11 @@ def clean_word(m_word):
         m_word = m_word[:m_word.rindex('-')]
     if m_word in REPLACE_WORDS:
         m_word = REPLACE_WORDS[m_word]
+    ## New protocol:
+    if '*' in m_word:
+        m_word = m_word[m_word.index('*'):]
+    if '[' in m_word:
+        m_word = m_word[m_word.index('['):]
     return m_word.lower()
 
 
@@ -145,8 +150,8 @@ with open(OUTPUT_FILEPATH, 'w', encoding='utf-8') as w:
         for m_file in comparisons[speakers_key]:
             current_inter = comparisons[speakers_key][m_file]
             inter_acc +=comparisons[speakers_key][m_file]
-            to_string+=' -> '+m_file +' '+ str(round(current_inter*100.0,4))+'%\n'
-        acc_value = round(100.0*inter_acc/len(comparisons[speakers_key]),4)
+            to_string+=' -> '+m_file +' '+ str(round(current_inter*100.0,2))+'%\n'
+        acc_value = round(100.0*inter_acc/len(comparisons[speakers_key]),2)
         keys_pairs[speakers_key] = acc_value
         first_speaker = speakers_key.split(KEY_SEPARATOR)[0]
         if first_speaker not in accum_agreement:
@@ -158,10 +163,10 @@ with open(OUTPUT_FILEPATH, 'w', encoding='utf-8') as w:
     final_inter = 0
     t_string=''
     for speaker in accum_agreement:       
-        c_value =  round(mean(accum_agreement[speaker]),4)
+        c_value =  round(mean(accum_agreement[speaker]),2)
         final_inter+=c_value
         t_string+='-> '+speaker+' '+str(c_value)+'% '+str(accum_agreement[speaker])+'\n'
-    w.write('Inter-agreement: '+str(round(final_inter/len(accum_agreement),4))+'%\n'+t_string)
+    w.write('Inter-agreement: '+str(round(final_inter/len(accum_agreement),2))+'%\n'+t_string)
     w.write('\n\nComparisons (first speaker is the golden reference): '+str(len(comparisons))+final_to_string)
 
     

@@ -4,16 +4,22 @@
 '''
 # Tranforms ctm files into sclite format
 # How to execute this script when printing all commented #####symbols lines:
-# PYTHONIOENCODING=utf-8 python3 ctm2sclite.py
+# PYTHONIOENCODING=utf-8 python3 ctm2sclite.py <parameteres>
 '''
 
 import os, re, sys, random
 
 if len(sys.argv) != 5:
-    print(sys.argv[0] + "  Please, specify 4 args: (1) PATH_REF_FOLDER, (2) PATH_HYP_FILE, (3) PATH_SENTENCES_INPUT, (4) PATH_SCLITE_OUTPUT")
+    print(sys.argv[0] + "  Please, specify 4 args: (1) PATH_REF_FOLDER, (2) PATH_HYP_CTM_FILE, (3) PATH_SENTENCES_INPUT, (4) PATH_SCLITE_OUTPUT")
     # python3 ctm2sclite.py $KALDIdir/ctmator/ctm_test  $KALDIdir/ctmator/hyp  $KALDIdir/ctmator/ctm_train $KALDIdir/ctmator/sclite_output
+    # python3 $KALDIdir/ctmator/ctm2sclite.py $myProject/ctm_test $myProject/decoded/hyp $myProject/ctm_train $myProject
+    # Explanation of the parameters    
+    #### (1) PATH_REF_FOLDER: $myProject/ctm_test -> It contains the ctm files which will be used as a reference (verbatim) transcription of the ctm files that will be decoded (decoded/hyp) and which will not take part on the training procedure
+    #### (2) PATH_HYP_CTM_FILE: $myProject/decoded/hyp -> It is the folder with the ctm files which contains all ctm hypotheses of the audio files decoded identified by ID in the ctm (after decoding)
+    #### (3) PATH_SENTENCES_INPUT: $myProject/ctm_train -> It only contains the ctm files which have not been decoded, and that will take part on the training procedure
+    #### (4) PATH_SCLITE_OUTPUT: $myProject -> Output folder in which the hyp.txt., ref.txt and sentences.txt SCLITE files will be generated.
     sys.exit(2)
-[PATH_REF_FOLDER, PATH_HYP_FILE, PATH_SENTENCES_INPUT, PATH_SCLITE_OUTPUT] = sys.argv[1:5]
+[PATH_REF_FOLDER, PATH_HYP_CTM_FILE, PATH_SENTENCES_INPUT, PATH_SCLITE_OUTPUT] = sys.argv[1:5]
 
 # Be careful, if you want map down digits you need the map_digits_to_words_v2.perl file
 # Not included in this repo. due to copyright issues.
@@ -153,7 +159,7 @@ print_map2sclite(get_words(PATH_SENTENCES_INPUT), PATH_SCLITE_OUTPUT, CORPUS_FIL
 # 
 
 # 3. N ctm hyp. files -> 1 sclite file
-print_map2sclite(get_words(PATH_HYP_FILE), PATH_SCLITE_OUTPUT, HYP_FILE_NAME_SCLITE_OUTPUT, True)
+print_map2sclite(get_words(PATH_HYP_CTM_FILE), PATH_SCLITE_OUTPUT, HYP_FILE_NAME_SCLITE_OUTPUT, True)
 
 # 4. sclite command
 # /vol/customopt/lamachine.stable/opt/kaldi/tools/sctk-2.4.10/bin/sclite -s -i rm -r ref.txt -h hyp.txt -o all dtl -n "homed_XXX"

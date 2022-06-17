@@ -4,6 +4,10 @@ ref/*
 !ref/.gitkeep
 sclite_output/*
 !sclite_output/.gitkeep
+
 example/*
 lexicon/*
 ref_original/*
+test*
+filter_ref*
+output*

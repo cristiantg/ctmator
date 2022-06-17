@@ -162,7 +162,7 @@ print_map2sclite(get_words(PATH_SENTENCES_INPUT), PATH_SCLITE_OUTPUT, CORPUS_FIL
 print_map2sclite(get_words(PATH_HYP_CTM_FILE), PATH_SCLITE_OUTPUT, HYP_FILE_NAME_SCLITE_OUTPUT, True)
 
 # 4. sclite command
-# /vol/customopt/lamachine.stable/opt/kaldi/tools/sctk-2.4.10/bin/sclite -s -i rm -r ref.txt -h hyp.txt -o all dtl -n "homed_XXX"
+# $KALDI_ROOT/tools/sctk/bin/sclite -s -i rm -r ref.txt -h hyp.txt -o all dtl -n "homed_XXX"
 
 if os.path.isfile(TEMPORAL_FILE):
     os.remove(TEMPORAL_FILE)

@@ -5,6 +5,7 @@
 # Splits one audio file into several audio files.
 # Splits the ctm related to the audio file into several ctm files.
 # The condition for splitting is set by a custom string included in the ctm.
+# You can discard the last sentence if it contains a certain word
 '''
 
 import sys, os
@@ -21,6 +22,7 @@ if len(sys.argv) != NUM_PARAMS:
     sys.exit(2)
 
 [ABSOLUTE_PATH_AUDIO_FILE, ABSOLUTE_PATH_CTM_FILE, SPLIT_PATTERN_STRING, AUDIO_FOLDER_OUTPUT, CTM_FOLDER_OUTPUT] = sys.argv[1:NUM_PARAMS]
+DISCARD_LAST_SENTENCES = ['SIL'] # You can custom this list
 SUFFIX='-'
 CTM_SUFFIX='.ctm'
 AUDIO_SUFFIX='.wav'
@@ -31,20 +33,23 @@ if not ABSOLUTE_PATH_CTM_FILE.endswith(CTM_SUFFIX):
     print(ABSOLUTE_PATH_CTM_FILE + " file must be a .ctm file")
     sys.exit(3)
 
-print('++ Splitting:',os.path.basename(ABSOLUTE_PATH_CTM_FILE).replace(CTM_SUFFIX,''))
+print('++ Splitting:',os.path.basename(ABSOLUTE_PATH_CTM_FILE).replace(CTM_SUFFIX,''), end=': ')
 
 # 1. Read source CTM file
 all_lines = []
 with open(ABSOLUTE_PATH_CTM_FILE, 'r', encoding='utf-8') as f:
     aux_line = []
-    for line in f.readlines():        
+    files_lines = f.readlines()
+    line_count = 1
+    for line in files_lines:
         fields = line.split()
         id_aux = fields[0]
         word_aux = fields[4]
         aux_line.append(line)
-        if (SPLIT_PATTERN_STRING in word_aux):
+        if (SPLIT_PATTERN_STRING in word_aux) or (line_count==len(files_lines) and ((len(aux_line)>1) or (word_aux not in DISCARD_LAST_SENTENCES))):
             all_lines.append(aux_line[:])
             aux_line = []
+        line_count += 1
 
 # 2. SPLIT CTM FILES  (and keep the start/ending times)
 os.makedirs(CTM_FOLDER_OUTPUT, exist_ok=True)
@@ -52,6 +57,7 @@ split_ctm_cont = 0
 start_end_times = {}
 DEFAULT_NO_TIME = 0
 current_end_time = DEFAULT_NO_TIME
+print(len(all_lines), 'sentences.')
 for line in all_lines:
     name_no_extension =  os.path.basename(ABSOLUTE_PATH_CTM_FILE).replace(CTM_SUFFIX,'')
     new_id = name_no_extension + SUFFIX + str(split_ctm_cont)

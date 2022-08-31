@@ -18,4 +18,4 @@ def v2(word):
         word = word[:word.index('*')]
     if '[' in word and len(word[:word.index('[')])>0:
         word = word[:word.index('[')]
-    return word
+    return word.replace(u'\u200b','').replace(u'\u200c','')

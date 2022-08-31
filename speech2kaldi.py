@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-# Prepares three KALDI files: spk2utt, segments and wavscp from a audio folder
+# Prepares three KALDI files: spk2utt, segments and wavscp from an audio folder
 '''
 
 import os, glob, sys
@@ -24,7 +24,7 @@ names_segments = {}
 names_paths = {}
 with open(os.path.join(OUTPUT_FOLDER,'spk2utt'), 'w') as f: 
     print('\t--> spk2utt')
-    files = os.listdir(AUDIO_FOLDER)
+    #files = os.listdir(AUDIO_FOLDER)
     for filename in glob.glob(os.path.join(AUDIO_FOLDER, '*.wav')):
         shortname = os.path.basename(filename)
         file_names[shortname]=(filename,shortname[0:shortname.find('.wav')])

@@ -6,6 +6,7 @@
 # (files with a no valid ctm/wav pair will be discarded).
 # It takes into account the suffixes of the filenames for the ID generation.
 # Output: spk2utt, text, textForLM, utt2spk and wav.scp Kaldi files.
+# Let op: words conatining xxx will be always <unk> xxx-dog, dog-xxx: xxx
 #├── spk2utt
 #	 fn000048 fn000048_1_001 fn000048_1_002 fn000048_1_003
 #	 fn000049 fn000049_1_001 fn000049_1_002 fn000049_1_003 
@@ -38,6 +39,7 @@ print('   - OUTPUT_FOLDER:',OUTPUT_FOLDER)
 UNK_SYMBOL = '<unk>'
 extension='.wav'
 extension_transcription='.ctm'
+m_encoding='utf-8'
 # spk2utt
 file_names = {}
 file_names_no_ext = []
@@ -50,7 +52,7 @@ for abs_path in ctm_dir:
     ctm_ids.add(os.path.basename(abs_path).replace(extension_transcription,''))
 print('\t->', len(wav_dir), '/',  len(ctm_ids), extension, '/', extension_transcription, "files to be prepared")
 
-with open(os.path.join(OUTPUT_FOLDER,'spk2utt'), 'w', encoding='utf-8') as f: 
+with open(os.path.join(OUTPUT_FOLDER,'spk2utt'), 'w', encoding=m_encoding) as f: 
     print('\t--> spk2utt')
     #files = os.listdir(AUDIO_FOLDER)
     for filename in wav_dir:
@@ -94,8 +96,8 @@ from word_filter_protocol import v2
 sys.path.append(LEXICONATOR)
 import local.word_clean as wc
 import re
-with open(os.path.join(OUTPUT_FOLDER,'wavscp.scp'), 'w', encoding='utf-8') as f, open(os.path.join(OUTPUT_FOLDER,'text'), 'w', encoding='utf-8') as text_f, open(os.path.join(OUTPUT_FOLDER,'textForLM'), 'w', encoding='utf-8') as textForLM_f:
-    print('\t--> wavscp.scp')
+with open(os.path.join(OUTPUT_FOLDER,'wav.scp'), 'w', encoding=m_encoding) as f, open(os.path.join(OUTPUT_FOLDER,'text'), 'w', encoding=m_encoding) as text_f, open(os.path.join(OUTPUT_FOLDER,'textForLM'), 'w', encoding=m_encoding) as textForLM_f:
+    print('\t--> wav.scp')
     print('\t--> text')
     print('\t--> textForLm')
     file_names=dict(sorted(file_names.items()))
@@ -104,13 +106,16 @@ with open(os.path.join(OUTPUT_FOLDER,'wavscp.scp'), 'w', encoding='utf-8') as f,
         f.write(file_names[i][1] + ' ' +file_names[i][0] + '\n')
         aux_name_id = file_names[i][1]
         
-        with open(os.path.join(CTM_FOLDER,aux_name_id+'.ctm'), 'r', encoding='utf-8') as ctm_aux:
+        with open(os.path.join(CTM_FOLDER,aux_name_id+'.ctm'), 'r', encoding=m_encoding) as ctm_aux:
             aux_line = []
             for line in ctm_aux.readlines():
                 fields = line.split()
                 # Clean 1: v2
-                # Clean 2: lexiconator            
-                aux_line.append(wc.remove_begin_end(wc.normalize_text(wc.clean_word(wc.clean_text(v2(fields[4])), UNK_SYMBOL), True), 1))
+                # Clean 2: lexiconator
+                m_text = v2(fields[4])
+                if 'xxx' in m_text:
+                    m_text = 'xxx'
+                aux_line.append(wc.remove_begin_end(wc.normalize_text(wc.clean_word(wc.clean_text(m_text), UNK_SYMBOL), True), 1))
             normal_line=re.sub(' +', ' ',' '.join(aux_line).strip())
             text_f.write(aux_name_id + ' ' + normal_line  + '\n')
             textForLM_f.write(normal_line + '\n')

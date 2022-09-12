@@ -6,7 +6,6 @@
 # (files with a no valid ctm/wav pair will be discarded).
 # It takes into account the suffixes of the filenames for the ID generation.
 # Output: spk2utt, text, textForLM, utt2spk and wav.scp Kaldi files.
-# Let op: words conatining xxx will be always <unk> xxx-dog, dog-xxx: xxx
 #├── spk2utt
 #	 fn000048 fn000048_1_001 fn000048_1_002 fn000048_1_003
 #	 fn000049 fn000049_1_001 fn000049_1_002 fn000049_1_003 
@@ -102,7 +101,6 @@ with open(os.path.join(OUTPUT_FOLDER,'wav.scp'), 'w', encoding=m_encoding) as f,
     print('\t--> textForLm')
     file_names=dict(sorted(file_names.items()))
     for i in sorted (file_names):
-        #f.write(file_names[i][1] +' sox '+file_names[i][0]  +' -r 16k -e signed-integer -t wav - remix - |\n')
         f.write(file_names[i][1] + ' ' +file_names[i][0] + '\n')
         aux_name_id = file_names[i][1]
         
@@ -110,11 +108,9 @@ with open(os.path.join(OUTPUT_FOLDER,'wav.scp'), 'w', encoding=m_encoding) as f,
             aux_line = []
             for line in ctm_aux.readlines():
                 fields = line.split()
-                # Clean 1: v2
-                # Clean 2: lexiconator
+                # Clean 1: v2 protocol                
                 m_text = v2(fields[4])
-                if 'xxx' in m_text:
-                    m_text = 'xxx'
+                # Clean 2: lexiconator
                 aux_line.append(wc.remove_begin_end(wc.normalize_text(wc.clean_word(wc.clean_text(m_text), UNK_SYMBOL), True), 1))
             normal_line=re.sub(' +', ' ',' '.join(aux_line).strip())
             text_f.write(aux_name_id + ' ' + normal_line  + '\n')

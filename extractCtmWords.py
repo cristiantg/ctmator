@@ -8,9 +8,9 @@
 
 from sys import argv, exit
 if len(argv) != 3:
-    print(argv[0] + "  Please, specify 2 args: ctm input folder path and lexicon output folder path")
+    print(argv[0] + "  Please, specify 2 args: (1) ctm input folder path and (2) lexicon output folder path")
     # python3 extractCtmWords.py ctm_files output_lexicon_folder
-    # python3 extractCtmWords.py /vol/tensusers4/ctejedor/lanewcristianmachine/opt/kaldi/egs/kaldi_egs_CGN/s5/homed/test /vol/tensusers4/ctejedor/lanewcristianmachine/opt/kaldi/egs/kaldi_egs_CGN/s5/homed/outputlexicon
+    # python3 extractCtmWords.py s5/homed/test_ctm s5/homed/outputlexicon
     exit(2)
 [INPUT_CTM_PATH, OUTPUT_LEXICON_FOLDER_PATH] = argv[1:3]
 
@@ -18,9 +18,7 @@ import os
 output_lexicon='extracted_words.txt'
 os.makedirs(OUTPUT_LEXICON_FOLDER_PATH, exist_ok=True)
 absolute_output_path=os.path.join(OUTPUT_LEXICON_FOLDER_PATH,output_lexicon)
-#print(INPUT_CTM_PATH, OUTPUT_LEXICON_FOLDER_PATH)
 ctm_files = [f for f in os.listdir(INPUT_CTM_PATH) if f.endswith('.ctm')]
-#print(ctm_files)
 all_words = set([])
 from word_filter_protocol import v2
 for file in ctm_files:    

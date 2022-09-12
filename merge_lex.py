@@ -20,8 +20,8 @@ def get_words(PATH):
     with open(PATH, 'r', encoding='utf-8') as l1:
         for line in l1.readlines():
             line = line.replace('\n','')
-            (orto, trans) = line.split(SEP)
-            words[orto] = trans
+            (ortho, trans) = line.split(SEP)
+            words[ortho] = trans
     return words
 
 def combine_words(l1, l2):
